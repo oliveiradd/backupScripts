@@ -4,6 +4,11 @@ set source=%userprofile%
 set destination=%userprofile%\Nextcloud\%computername%\%username%
 set options=/E /R:3 /W:5 /XA:H /XJD /XD AppData Contacts Downloads Favorites IntelGraphicsProfiles Links Onedrive Nextcloud Searches /XF *.DAT* *ntuser* desktop.ini
 
+if not exist %userprofile%\Nextcloud ( 
+	msg %username% "Error. Nextcloud default folder not found."
+	exit
+)
+
 if not exist %userprofile%\Nextcloud\%computername%\%username% ( 
     mkdir %userprofile%\Nextcloud\%computername%\%username%
 )

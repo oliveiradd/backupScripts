@@ -40,14 +40,14 @@ backup_data() {
 	fi
 
 	if [[ $1 = --send ]]; then
-		rsync $rsync_options --exclude={'.*','Downloads','Public','Templates','wkiss'} $mode2 $3 $HOME/ $external_storage
-		rsync $rsync_options --exclude={'Downloads','Public','Templates','wkiss'} $mode2 $3 $HOME/* $external_storage
+		rsync $rsync_options --exclude={'.*','Downloads','Public','Templates'} $mode2 $3 $HOME/ $external_storage
+		rsync $rsync_options --exclude={'Downloads','Public','Templates','.vault'} $mode2 $3 $HOME/* $external_storage
 		for item in ${additional_sources[@]}; do
 			rsync $rsync_options $mode2 $3 $HOME/$item/ $external_storage/$item
 		done
 	elif [[ $1 = --receive ]]; then
-		rsync $rsync_options --exclude={'.*','Downloads','Public','Templates','wkiss'} --force $mode2 $3 $external_storage/ $HOME
-		rsync $rsync_options --exclude={'Downloads','Public','Templates','wkiss'} --force $mode2 $3 $external_storage/* $HOME
+		rsync $rsync_options --exclude={'.*','Downloads','Public','Templates'} --force $mode2 $3 $external_storage/ $HOME
+		rsync $rsync_options --exclude={'Downloads','Public','Templates','.vault'} --force $mode2 $3 $external_storage/* $HOME
 		for item in ${additional_sources[@]}; do
 			rsync $rsync_options --force $mode2 $3 $external_storage/$item/ $HOME/$item
 		done
@@ -74,7 +74,7 @@ for partition_name in ${backup_partitions[@]}; do
 	external_storage=$devices_mount_path/$partition_name/$USER
 	if [[ -d $external_storage ]]; then
 		backup_data $action $mode $additional_option
-		if [[ $2 == "--dry-run" ]]; then
+		if [[ $additional_option == "--dry-run" ]]; then
 			echo "Opção dry run: snapshot não será criado"
 			exit 0
 		fi
@@ -114,10 +114,10 @@ if [[ $target = --local ]]; then
 elif [[ $target = --samba ]]; then
 	samba_transfer
 elif [[ $target = --rsyncd ]]; then
-	vpn
-	sleep 3
+#	vpn
+#	sleep 10
 	rsync_transfer
-	vpn --disconnect
+#	vpn --disconnect
 else 
 	echo "Error: invalid target value"
 fi

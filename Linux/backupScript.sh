@@ -98,6 +98,11 @@ rsync_transfer() {
 
 ## Start of script
 while IFS= read -r path; do
+
+    if [[ "${path:0:1}" = "#" ]]; then
+        continue
+    fi
+
     if [[ $target = --local ]]; then
         local_transfer
     elif [[ $target = --samba ]]; then

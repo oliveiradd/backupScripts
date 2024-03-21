@@ -1,0 +1,4 @@
+### arquivo de configuração de variáveis para o script de backup
+## linhas começando com # são comentários e serão ignoradas pelo script
+server_ip=10.8.0.1
+server_share=daniel

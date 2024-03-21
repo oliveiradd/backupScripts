@@ -1,29 +1,29 @@
 @echo off
 
-set server=10.8.0.1
-set remote_share=%username%
+if not exist "%~dp0config\config.txt" (
+	echo File^ config.txt^ not^ found!
+	pause
+	exit
+)
+for /F "usebackq tokens=*" %%V in ( `type "%~dp0config\config.txt" ^| findstr /V "^#"` ) do ( set "%%V" )
 
-set source=%userprofile%
-set destination=\\%server%\%remote_share%
-set options=/E /R:3 /W:5 /XA:H /XJD /XD AppData Contacts Downloads Favorites IntelGraphicsProfiles Links Onedrive Nextcloud Searches /XF *.DAT* *ntuser* desktop.ini
+set "destination=\\%server_ip%\%server_share%"
 
-if not exist %destination% ( 
+if not exist "%destination%" ( 
 	msg "%username%" "Error. Network share not available."
 	exit
 )
 
-if not exist %destination%\%computername%\%username% ( 
-	mkdir %destination%\%computername%\%username%
+if not exist "%~dp0config\targets.txt" (
+	echo File^ targets.txt^ not^ found!
+	pause
+	exit
 )
 
 if %1==--add (
-    robocopy "%source%" "%destination%" %options% /XO
-) else if %1==--sync (
-    robocopy "%source%" "%destination%" %options% /XO /PURGE
-) else if %1==--pull (
-    robocopy "%destination%" "%source%" %options% /XO
-) else if %1==--restore (
-    robocopy "%destination%" "%source%" %options%
+    options=/XO
 ) else (
-    echo "Option not recognized."
+    options=/XO /PURGE
 )
+
+for /F "usebackq tokens=*" %%V in ( `type "%~dp0config\targets.txt" ^| findstr /V "^#"` ) do ( robocopy "%userprofile%\%%V" "%destination%\%computername%\%username%\%%V" %options% )

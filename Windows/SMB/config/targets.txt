@@ -1,0 +1,7 @@
+### pastas das quais fazer backup (a partir da pasta do usuário "C:\Users\%username%\")
+Desktop
+Documents
+#Downloads
+Music
+Pictures
+Videos

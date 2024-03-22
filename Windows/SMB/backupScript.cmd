@@ -21,9 +21,9 @@ if not exist "%~dp0config\targets.txt" (
 )
 
 if "%1"=="--add" (
-    set options=/S /XO
+    set options=/S /XO /R:3
 ) else (
-    set options=/S /XO /PURGE
+    set options=/S /XO /PURGE /R:3
 )
 set exclude=/XF *.DAT* *ntuser* desktop.ini
 

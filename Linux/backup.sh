@@ -23,7 +23,7 @@ if [[ -z "$rsync_user" || "${$rsync_user:0:1}" = " " ]]; then
 	rsync_user=$USER
 fi
 
-devices_mount_path=/run/media/$USER
+devices_mount_path=/media/$USER
 samba_mount_point=/run/user/$UID/gvfs/smb-share:server=$server_ip,share=$samba_share
 target=$1
 action=$2

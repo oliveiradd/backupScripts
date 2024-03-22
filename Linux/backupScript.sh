@@ -3,11 +3,11 @@
 ## file with list of directories to backup
 script_path=$(realpath "$0")
 script_dir=$(dirname "$script_path")
-dir_list=$script_dir/targets
+dir_list=$script_dir/config/targets
 
 ## remote parameters
 remote_user=$USER
-server=10.8.0.1
+server=192.168.2.2
 
 ## local partitions
 backup_partitions=(
@@ -40,9 +40,9 @@ backup_data() {
 	fi
 
 	if [[ $1 = --send ]]; then
-		rsync --mkpath $rsync_options --exclude={'.*','Downloads','Public','Templates'} $mode2 $3 $path/ $external_storage$path/
+		rsync --mkpath $rsync_options $mode2 $3 $path/ $external_storage$path/
 	elif [[ $1 = --receive ]]; then
-		rsync --mkpath $rsync_options --exclude={'.*','Downloads','Public','Templates'} --force $mode2 $3 $external_storage$path/ $path
+		rsync --mkpath $rsync_options --force $mode2 $3 $external_storage$path/ $path
 	else
 		echo "Primeiro argumento não reconhecido."
 		exit 1
@@ -71,15 +71,6 @@ for partition_name in ${backup_partitions[@]}; do
 done
 }
 
-## vpn function
-vpn() {
-if [[ $1 = --disconnect ]]; then
-	sudo systemctl stop openvpn-client@$openvpn_filename.service
-else
-	sudo systemctl start openvpn-client@$openvpn_filename.service
-fi
-}
-
 ## samba transfer function
 samba_transfer() {
 gio mount smb://$server/$remote_user
@@ -99,19 +90,16 @@ rsync_transfer() {
 ## Start of script
 while IFS= read -r path; do
 
-    if [[ "${path:0:1}" = "#" ]]; then
-        continue
-    fi
+	if [[ "${path:0:1}" = "#" ]]; then
+		continue
+	fi
 
     if [[ $target = --local ]]; then
         local_transfer
     elif [[ $target = --samba ]]; then
         samba_transfer
     elif [[ $target = --rsyncd ]]; then
-    #	vpn
-    #	sleep 10
         rsync_transfer
-    #	vpn --disconnect
     else 
         echo "Error: invalid target value"
     fi

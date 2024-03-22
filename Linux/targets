@@ -1,7 +1,0 @@
-/home/daniel
-/home/daniel/.ssh
-/home/daniel/.config_bkp
-#/home/daniel/.ignored_line
-/etc/dconf
-/etc/systemd/network
-/etc/systemd/resolved.conf.d

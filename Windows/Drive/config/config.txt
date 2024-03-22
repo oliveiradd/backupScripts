@@ -1,0 +1,2 @@
+## this file holds the drive letter for backup
+drive_letter=D:

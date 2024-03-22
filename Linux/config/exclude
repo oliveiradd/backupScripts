@@ -1,2 +1,0 @@
-### write in the next uncommented line, separated by commas, the patterns you'd like to exclud from backup
-.git,.vault

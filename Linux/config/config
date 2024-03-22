@@ -1,0 +1,13 @@
+## configuration for the backup script (leave computer_name empty to use your system's current)
+computer_name=
+server_ip=192.168.2.2
+
+# rsyncd configuration (leave user empty to use your current username)
+rsync_user=
+rsync_share=danielbkp
+
+#samba configuration
+samba_share=daniel
+
+# local backup partition names
+partition_name=DBackup1

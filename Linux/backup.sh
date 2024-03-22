@@ -4,21 +4,27 @@
 script_path=$(realpath "$0")
 script_dir=$(dirname "$script_path")
 dir_list=$script_dir/config/targets
+config_file=$script_dir/config/config
 
 ## remote parameters
-remote_user=$USER
-server=192.168.2.2
+while IFS= read -r line; do
+	# ignore empty lines, lines starting with # and lines starting with " "
+	if [[ -z "$line" || "${line:0:1}" = "#" || "${line:0:1}" = " " ]]; then
+		continue
+	fi
+	export $line
+done < $config_file
 
-## local partitions
-backup_partitions=(
-DBackup0
-DBackup1
-DBackup2
-)
+if [[ -z "$computer_name" || "${$computer_name:0:1}" = " " ]]; then
+	computer_name=$HOSTNAME
+fi
+
+if [[ -z "$rsync_user" || "${$rsync_user:0:1}" = " " ]]; then
+	rsync_user=$USER
+fi
 
 devices_mount_path=/run/media/$USER
-samba_mount_point=/run/user/$UID/gvfs/smb-share:server=$server,share=$remote_user
-openvpn_filename=thinkpad-noredir
+samba_mount_point=/run/user/$UID/gvfs/smb-share:server=$server_ip,share=$samba_share
 target=$1
 action=$2
 mode=$3
@@ -62,35 +68,32 @@ snapshot() {
 
 ## local transfer function
 local_transfer() {
-for partition_name in ${backup_partitions[@]}; do
-	external_storage=$devices_mount_path/$partition_name/$HOSTNAME
+	external_storage=$devices_mount_path/$partition_name/$computer_name
 	if [[ -d $external_storage ]]; then
 		backup_data $action $mode $additional_option
-        break
 	fi
-done
 }
 
 ## samba transfer function
 samba_transfer() {
-gio mount smb://$server/$remote_user
+gio mount smb://$server_ip/$samba_share
 external_storage=$samba_mount_point
 if [[ -d $external_storage ]]; then
 	backup_data $action $mode $additional_option
-	gio mount --unmount smb://$server/$remote_user
+	gio mount --unmount smb://$server_ip/$samba_share
 fi
 }
 
 ## rsync daemon transfer function 
 rsync_transfer() {
-	external_storage=$remote_user@$server::danielbkp
+	external_storage=$rsync_user@$server_ip::$rsync_share
 	backup_data $action $mode $additional_option
 }
 
 ## Start of script
 while IFS= read -r path; do
 
-	if [[ "${path:0:1}" = "#" ]]; then
+	if [[ -z "$path" || "${path:0:1}" = "#" || "${path:0:1}" = " " ]]; then
 		continue
 	fi
 

@@ -21,10 +21,11 @@ if not exist "%~dp0config\targets.txt" (
 )
 
 if "%1"=="--add" (
-    options=/XO /XF *.DAT* *ntuser* desktop.ini
+    set options=/S /XO
 ) else (
-    options=/XO /PURGE /XF *.DAT* *ntuser* desktop.ini
+    set options=/S /XO /PURGE
 )
+set exclude=/XF *.DAT* *ntuser* desktop.ini
 
-for /F "usebackq tokens=*" %%V in ( `type "%~dp0config\targets.txt" ^| findstr /V "^#"` ) do ( robocopy "%userprofile%\%%V" "%destination%\%computername%\%username%\%%V" %options% )
+for /F "usebackq tokens=*" %%V in ( `type "%~dp0config\targets.txt" ^| findstr /V "^#"` ) do ( robocopy "%userprofile%\%%V" "%destination%\%computername%\%username%\%%V" %options% %exclude% )
 pause
